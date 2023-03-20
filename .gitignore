@@ -5,6 +5,7 @@
 *.tfstate
 *.tfstate.*
 .terraform/*
+.terraform/providers/registry.terraform.io/
 
 # Crash log files
 crash.log
