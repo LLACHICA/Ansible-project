@@ -1,0 +1,19 @@
+
+PS F:\Azure\Ansible-project> git push origin master
+Enumerating objects: 57, done.
+Counting objects: 100% (57/57), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (43/43), done.
+Writing objects: 100% (54/54), 45.56 MiB | 3.89 MiB/s, done.
+Total 54 (delta 19), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (19/19), completed with 2 local objects.
+remote: error: Trace: 1ba406c8d24559a34009b9f9da5df4c1fb748bc2a21e427410a238036d04be04
+remote: error: See https://gh.io/lfs for more information.
+remote: error: File .terraform/providers/registry.terraform.io/hashicorp/azurerm/3.48.0/windows_amd64/terraform-provider-azurerm_v3.48.0_x5.exe is 183.45 MB; this exceeds GitHub's file size limit of 100.00 MB
+remote: error: GH001: Large files detected. You may want to try Git Large File Storage - https://git-lfs.github.com.
+To https://github.com/LLACHICA/Ansible-project.git
+ ! [remote rejected] master -> master (pre-receive hook declined)
+error: failed to push some refs to 'https://github.com/LLACHICA/Ansible-project.git'
+
+## fix
+git filter-branch -f --index-filter 'git rm --cached -r --ignore-unmatch .terraform/'
