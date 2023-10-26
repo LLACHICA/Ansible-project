@@ -1,0 +1,43 @@
+---
+- name: Install packages and services
+  hosts: all  # Run tasks on all hosts
+
+  tasks:
+    - name: Install NTP, htop, Plex, and NFS client
+      become: yes  # Run tasks with sudo privileges
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - ntp
+        - htop
+        - nfs-common
+
+- name: Install Nginx and PHP
+  hosts: webserver  # Run tasks on webserver group
+
+  tasks:
+    - name: Install Nginx and PHP
+      become: yes
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - nginx
+        - htop
+        - php-fpm
+
+- name: Install MySQL
+  hosts: dbserver  # Run tasks on dbserver group
+
+  tasks:
+    - name: Install MySQL
+      become: yes
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - htop
+        - mysql-server
+        - ntp
+

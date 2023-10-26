@@ -1,0 +1,5 @@
+---
+services_to_stop:
+  - snmpd
+  - sshd
+  - firewall

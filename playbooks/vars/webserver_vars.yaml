@@ -1,0 +1,5 @@
+---
+services_to_stop:
+  - htop
+  - ntp
+  - nginx

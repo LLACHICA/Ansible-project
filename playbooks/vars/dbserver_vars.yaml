@@ -1,0 +1,6 @@
+---
+services_to_stop:
+  - htop
+  - ntp
+  - nfs-common
+  - mysql

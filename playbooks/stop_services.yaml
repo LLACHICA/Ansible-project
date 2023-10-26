@@ -1,0 +1,19 @@
+---
+- name: Stop Services Based on Server Role
+  hosts: all
+
+  tasks:
+    - name: Include role-specific variables
+      include_vars: "{{ playbook_dir }}/vars/{{ group_names[0] }}_vars.yaml"
+
+    - name: Show the group(s) the server belongs to
+      debug:
+        msg: "The server '{{ inventory_hostname }}' belongs to the group(s): {{ group_names }}"
+
+    - name: Stop services based on the server's role
+      become: yes
+      service:
+        name: "{{ item }}"
+        state: stopped
+      loop: "{{ services_to_stop }}"
+

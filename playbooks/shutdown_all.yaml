@@ -1,0 +1,8 @@
+---
+- name: Shutdown Servers in Reverse Order
+  hosts: all  # Run tasks on all hosts
+
+  tasks:
+    - name: Shutdown server
+      become: yes  # Run tasks with sudo privileges
+      command: shutdown -h now
