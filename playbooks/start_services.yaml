@@ -1,8 +1,7 @@
 ---
-- name: Stop Services Based on Server Role
+- name: Start Services Based on Server Role
   hosts: all
   gather_facts: yes
-  become: yes
 
   tasks:
     - name: Include role-specific variables
@@ -15,10 +14,10 @@
     - name: Get systemd service facts
       service_facts:
 
-    - name: Stop services based on the server's role
+    - name: Start services based on the server's role
       systemd:
         name: "{{ item }}"
-        state: stopped
-      loop: "{{ services_to_stop }}"
-      when: item in ansible_facts.services and ansible_facts.services[item]['state'] == 'running'
+        state: started
+      loop: "{{ services_to_start }}"
+      when: item in ansible_facts.services and ansible_facts.services[item]['state'] == 'inactive'
 

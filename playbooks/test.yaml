@@ -17,8 +17,8 @@
 
     - name: Stop services based on the server's role
       systemd:
-        name: "{{ item }}"
+        name: "{{ item.key }}"
         state: stopped
-      loop: "{{ services_to_stop }}"
-      when: item in ansible_facts.services and ansible_facts.services[item]['state'] == 'running'
+      loop: "{{ lookup('dict', ansible_facts.services | default({})) }}"
+      when: "'{{ item.key }}' in services_to_stop"
 

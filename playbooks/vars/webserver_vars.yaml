@@ -1,5 +1,5 @@
 ---
 services_to_stop:
-  - htop
+  - php
   - ntp
   - nginx
