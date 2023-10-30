@@ -2,23 +2,19 @@
 - name: Stop Services Based on Server Role
   hosts: all
   gather_facts: yes
-  become: yes
+
+  vars:
+    svc_name: ['php', 'nginx', 'ntp', 'mysql', 'ntp']
+    server_name: ['webserver', 'webserver', 'dbserver', 'management']
 
   tasks:
-    - name: Include role-specific variables
-      include_vars: "{{ playbook_dir }}/vars/{{ group_names[0] }}_vars.yaml"
-
-    - name: Show the group(s) the server belongs to
-      debug:
-        msg: "The server '{{ inventory_hostname }}' belongs to the group(s): {{ group_names }}"
-
-    - name: Get systemd service facts
-      service_facts:
-
-    - name: Stop services based on the server's role
+    - name: Stop Apps
       systemd:
-        name: "{{ item.key }}"
         state: stopped
-      loop: "{{ lookup('dict', ansible_facts.services | default({})) }}"
-      when: "'{{ item.key }}' in services_to_stop"
+        name" ' {{ item.0 }}'
+      when: "'{{ item.1 }} in inventory_hostname"
+      with_together: 
+        - "{{ svc_name }}"
+        - "{{ server_name }}"
+
 
