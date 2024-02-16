@@ -1,0 +1,41 @@
+---
+- name: Start services based on hostname
+  hosts: all
+  gather_facts: true
+  become: yes
+  vars:
+    service_mapping:
+      proxy:
+        - keepalivedx
+        - haproxy
+      proxhost:
+        - cron
+        - chrony
+      pihole:
+        - cron
+        - chrony
+
+  tasks:
+    - name: Gather service facts
+      service_facts:
+
+    - name: Determine services to start based on hostname
+      set_fact:
+        services_to_start: "{{ service_mapping[host_group] | default([]) }}"
+      vars:
+        host_group: "{{ service_mapping.keys() | select('in', inventory_hostname) | list | first }}"
+
+    - name: Start services
+      service:
+        name: "{{ item }}"
+        state: started
+      with_items: "{{ services_to_start }}"
+
+    - name: Validate service status after starting
+      service_facts:
+
+    - name: Check service status after starting
+      debug:
+        msg: "{{ item }} is {{ ansible_facts.services[item]['state'] }}"
+      with_items: "{{ services_to_start }}"
+

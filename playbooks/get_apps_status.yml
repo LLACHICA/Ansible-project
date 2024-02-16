@@ -1,0 +1,41 @@
+---
+- name: Get services based on hostname
+  hosts: all
+  gather_facts: true
+  become: yes
+  vars:
+    service_mapping:
+      proxy:
+        - keepalived
+        - haproxy
+      proxhost:
+        - cronx
+        - chrony
+      pihole:
+        - cron
+        - chrony
+
+  tasks:
+    - name: Gather service facts
+      service_facts:
+
+    - name: Determine services to check based on hostname
+      set_fact:
+        services_to_check: "{{ service_mapping[host_group] | default([]) }}"
+      vars:
+        host_group: "{{ service_mapping.keys() | select('in', inventory_hostname) | list | first }}"
+
+    - name: Check if services exist and get their status
+      block:
+        - name: Get service status
+          debug:
+            msg: "{{ item }} is {{ ansible_facts.services[item]['state'] }}"
+          with_items: "{{ services_to_check }}"
+      rescue:
+        - name: Tag task as failed if service does not exist
+          fail:
+            msg: "Service {{ item }} does not exist on the host."
+          when: true
+          with_items: "{{ services_to_check }}"
+      when: services_to_check | length > 0
+

@@ -1,0 +1,41 @@
+---
+- name: Stop services based on hostname
+  hosts: all
+  gather_facts: true
+  become: yes
+  vars:
+    service_mapping:
+      proxy:
+        - keepalivedx
+        - haproxy
+      proxhost:
+        - cron
+        - chrony
+      pihole:
+        - cron
+        - chrony
+
+  tasks:
+    - name: Gather service facts
+      service_facts:
+
+    - name: Determine services to stop based on hostname
+      set_fact:
+        services_to_stop: "{{ service_mapping[host_group] | default([]) }}"
+      vars:
+        host_group: "{{ service_mapping.keys() | select('in', inventory_hostname) | list | first }}"
+
+    - name: Stop services
+      service:
+        name: "{{ item }}"
+        state: stopped
+      with_items: "{{ services_to_stop }}"
+
+    - name: Validate service status after stopping
+      service_facts:
+
+    - name: Check service status after stopping
+      debug:
+        msg: "{{ item }} is {{ ansible_facts.services[item]['state'] }}"
+      with_items: "{{ services_to_stop }}"
+
