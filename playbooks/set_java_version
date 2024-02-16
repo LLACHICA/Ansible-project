@@ -1,0 +1,22 @@
+---
+- name: Set Java version from file
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Read Java version from file
+      shell: "cat /var/tmp/java_before_patch"
+      register: java_version_file
+
+    - name: Set Java version using update-alternatives
+      alternatives:
+        name: java
+        path: "{{ java_version_file.stdout }}"
+#        link: /usr/bin/java
+      when: java_version_file.stdout is defined
+
+    - name: Print Java version (after setting)
+      ansible.builtin.debug:
+        msg: "Java version set to {{ java_version_file }}"
+
+
