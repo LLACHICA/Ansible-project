@@ -1,17 +1,20 @@
 ---
 - name: Get services based on hostname
   hosts: all
-  gather_facts: true
+  gather_facts: false
   become: yes
   vars:
     service_mapping:
       proxy:
-        - keepalived
-        - haproxy
+        - chrony
+        - cron
       proxhost:
         - cronx
         - chrony
       pihole:
+        - cron
+        - chrony
+      systool:
         - cron
         - chrony
 
@@ -29,12 +32,13 @@
       block:
         - name: Get service status
           debug:
-            msg: "{{ item }} is {{ ansible_facts.services[item]['state'] }}"
+            msg: "{{ item }} is {{ ansible_facts.services[item ~ '.service']['state'] }}"
+          when: "ansible_facts.services[item ~ '.service'] is defined"
           with_items: "{{ services_to_check }}"
       rescue:
-        - name: Tag task as failed if service does not exist
+        - name: Failed to get service status
           fail:
-            msg: "Service {{ item }} does not exist on the host."
+            msg: "Service {{ item }} failed on {{ inventory_hostname }}."
           when: true
           with_items: "{{ services_to_check }}"
       when: services_to_check | length > 0

@@ -6,19 +6,19 @@
   vars:
     service_mapping:
       proxy:
-        - keepalivedx
+        - keepalived
         - haproxy
       proxhost:
-        - cron
+        - cronx
         - chrony
       pihole:
         - cron
         - chrony
+      systools:
+        - cron
+        - chrony
 
   tasks:
-    - name: Gather service facts
-      service_facts:
-
     - name: Determine services to start based on hostname
       set_fact:
         services_to_start: "{{ service_mapping[host_group] | default([]) }}"
@@ -29,13 +29,15 @@
       service:
         name: "{{ item }}"
         state: started
+      when:  "ansible_facts.services[item ~ '.service'] is defined"
       with_items: "{{ services_to_start }}"
 
-    - name: Validate service status after starting
-      service_facts:
+        #    - name: Validate service status after starting
+        #service_facts:
 
     - name: Check service status after starting
       debug:
         msg: "{{ item }} is {{ ansible_facts.services[item]['state'] }}"
+      when:  "ansible_facts.services[item ~ '.service'] is defined"
       with_items: "{{ services_to_start }}"
 

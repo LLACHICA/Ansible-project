@@ -1,17 +1,20 @@
 ---
 - name: Stop services based on hostname
   hosts: all
-  gather_facts: true
+  gather_facts: false
   become: yes
   vars:
     service_mapping:
       proxy:
-        - keepalivedx
+        - keepalived
         - haproxy
       proxhost:
         - cron
         - chrony
       pihole:
+        - cron
+        - chrony
+      systools:
         - cron
         - chrony
 
@@ -30,6 +33,7 @@
         name: "{{ item }}"
         state: stopped
       with_items: "{{ services_to_stop }}"
+#      ignore_errors: True
 
     - name: Validate service status after stopping
       service_facts:

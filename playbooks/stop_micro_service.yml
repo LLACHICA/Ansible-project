@@ -17,33 +17,22 @@
       systools:
         - cron
         - chrony
+
   tasks:
-    - name: Gather service facts
-      service_facts:
+    - name: Stop services in proper sequence
+      block:
+        - name: Stop services for each group
+          service:
+            name: "{{ item }}"
+            state: stopped
+          loop: "{{ service_mapping[ansible_hostname.split('.')[0]] }}"
+          notify: confirm_service_stopped
+      loop_control:
+        pause: 30
 
-    - name: Get just the 'proxy' key from service_mapping
-      debug:
-        msg: "{{ service_mapping.values() | flatten }}"
-
-    - name: Stop services under proxy on inventory_hostname
-      service:
-        name: "{{ item }}"
-        state: stopped
-      loop: "{{ service_mapping['proxy'] }}"
-      when: 
-        - "'proxy' in inventory_hostname"
-#        - "'{{ item }}' in ansible_facts.services and ansible_facts.services['{{ item }}'].state == 'running'"
-
-    - name: Determine services to stop based on hostname
-      set_fact:
-        services_to_stop: "{{ service_mapping[host_group] | default([]) }}"
-      vars:
-        host_group: "{{ service_mapping.keys() | select('in', inventory_hostname) | list | first }}"
-
-    - name: Stop services
-      service:
-        name: "{{ item }}"
-        state: stopped
-      with_items: "{{ services_to_stop }}"
-      when: "'proxy' not in inventory_hostname"
+  handlers:
+    - name: confirm_service_stopped
+      pause:
+        prompt: "Confirm that service '{{ item }}' is stopped before proceeding (press Enter when done)"
+        seconds: 30
 
