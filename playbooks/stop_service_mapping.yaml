@@ -1,36 +1,25 @@
 ---
-- name: Stop services based on hostname
+- name: Stop Services Based on Server Role
   hosts: all
-  gather_facts: true
-  become: yes
+  gather_facts: yes
+
   vars:
     service_mapping:
-      proxy:
-        - keepalived
-        - haproxy
-      proxhost:
-        - cron
-        - chrony
-      pihole:
-        - bluetooth
-        - smbd
+      webserver:
+        - nginx
+        - php
+        - ntp
+      dbserver:
+        - ntp
+        - mysql
+      management:
+        - snmpd
+        - ntp
 
   tasks:
-    - name: Determine services to stop based on hostname
-      set_fact:
-        services_to_stop: "{{ service_mapping[host_group] | default([]) }}"
-      vars:
-        host_group: "{{ groups.keys() | select('in', inventory_hostname) | list | first }}"
-
-    - name: Debug - Stopping service
-      debug:
-        msg: "Stopping service: {{ item }}"
-      loop: "{{ services_to_stop }}"
-      when: services_to_stop is defined and services_to_stop | length > 0
-
-    - name: Stop services
+    - name: Stop Apps
       systemd:
+        state: stopped
         name: "{{ item }}"
-        state: started
-      loop: "{{ services_to_stop }}"
-      when: services_to_stop is defined and services_to_stop | length > 0
+      when: "inventory_hostname in service_mapping.keys()"
+      loop: "{{ service_mapping[inventory_hostname] }}"
