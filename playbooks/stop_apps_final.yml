@@ -6,8 +6,8 @@
   vars:
     service_mapping:
       proxy:
-        - keepalived
-        - haproxy
+        - cron
+        - chrony
       proxhost:
         - cron
         - chrony
@@ -32,8 +32,8 @@
       service:
         name: "{{ item }}"
         state: stopped
+      when:  "ansible_facts.services[item ~ '.service'] is defined"
       with_items: "{{ services_to_stop }}"
-#      ignore_errors: True
 
     - name: Validate service status after stopping
       service_facts:
@@ -41,5 +41,6 @@
     - name: Check service status after stopping
       debug:
         msg: "{{ item }} is {{ ansible_facts.services[item]['state'] }}"
+      when:  "ansible_facts.services[item ~ '.service'] is defined"
       with_items: "{{ services_to_stop }}"
 

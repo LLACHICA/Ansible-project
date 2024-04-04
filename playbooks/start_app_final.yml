@@ -1,13 +1,13 @@
 ---
 - name: Start services based on hostname
   hosts: all
-  gather_facts: true
+  gather_facts: false
   become: yes
   vars:
     service_mapping:
       proxy:
-        - keepalived
-        - haproxy
+        - cron
+        - chrony
       proxhost:
         - cronx
         - chrony
@@ -19,6 +19,9 @@
         - chrony
 
   tasks:
+    - name: Gather service facts
+      service_facts:
+
     - name: Determine services to start based on hostname
       set_fact:
         services_to_start: "{{ service_mapping[host_group] | default([]) }}"
@@ -32,8 +35,8 @@
       when:  "ansible_facts.services[item ~ '.service'] is defined"
       with_items: "{{ services_to_start }}"
 
-        #    - name: Validate service status after starting
-        #service_facts:
+    - name: Validate service status after starting
+      service_facts:
 
     - name: Check service status after starting
       debug:
