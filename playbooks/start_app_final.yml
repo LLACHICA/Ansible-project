@@ -9,7 +9,7 @@
         - cron
         - chrony
       proxhost:
-        - cronx
+        - cron
         - chrony
       pihole:
         - cron
