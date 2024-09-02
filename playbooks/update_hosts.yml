@@ -6,7 +6,7 @@
   tasks:
     - name: Update /etc/hosts using template
       template:
-        src: playbooks/template/hosts.j2"
+        src: "template/hosts.j2"
         dest: /etc/hosts
         owner: root
         group: root
