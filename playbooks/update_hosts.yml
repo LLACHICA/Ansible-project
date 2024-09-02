@@ -1,0 +1,13 @@
+---
+- name: Update /etc/hosts from template
+  hosts: all
+  become: yes  # Use sudo to execute tasks
+
+  tasks:
+    - name: Update /etc/hosts using template
+      template:
+        src: template/host.j2"
+        dest: /etc/hosts
+        owner: root
+        group: root
+        mode: '0644'
