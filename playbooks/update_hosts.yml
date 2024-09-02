@@ -6,7 +6,7 @@
   tasks:
     - name: Update /etc/hosts using template
       template:
-        src: template/host.j2"
+        src: host.j2"
         dest: /etc/hosts
         owner: root
         group: root
