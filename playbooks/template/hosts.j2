@@ -1,0 +1,36 @@
+
+127.0.0.1 localhost.localdomain localhost
+
+
+# The following lines are desirable for IPv6 capable hosts
+
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters
+ff02::3 ip6-allhosts
+
+
+# Proxmox host
+
+192.168.2.200   proxhost-01.nix.local   proxhost-01
+192.168.2.201   proxhost-02.nix.local   proxhost-02
+192.168.2.202   proxhost-03.nix.local   proxhost-03
+
+# HA proxy container
+
+192.168.2.10    haproxy-01.nix.local    haproxy-01
+192.168.2.20    haproxy-02.nix.local    haproxy-02
+
+# K8S Master container
+
+192.168.2.101   k8s-master-01.nix.local k8s-master-01
+192.168.2.102   k8s-master-02.nix.local k8s-master-02
+192.168.2.103   k8s-master-03.nix.local k8s-master-03
+
+# Prox NAS
+192.168.2.100   qnapnas.nix.local     qnapnas
+192.168.2.247   mediasrv.nix.local    mediasrv
+192.168.2.54   pi-hole2.nix.local     pi-hole2
+192.168.2.53   pi-hole1.nix.local     pi-hole1
