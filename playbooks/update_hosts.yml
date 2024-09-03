@@ -11,3 +11,31 @@
         owner: root
         group: root
         mode: '0644'
+        
+    - name: Create the "ansadm" user
+      user:
+        name: ansadm
+        state: present
+        create_home: yes
+        shell: /bin/bash
+
+    - name: Create .ssh directory
+      file:
+        path: /home/ansadm/.ssh
+        state: directory
+        owner: ansadm
+        group: ansadm
+        mode: '0700'
+
+    - name: Add the provided public key to authorized_keys
+      authorized_key:
+        user: ansadm
+        state: present
+        key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDGh1c898oFLchmqQ30W+afBGiggoTfn7bRwOHAzp5B/ZuefT2I15nsMMBsUJ9Gub60ZIA7ECNTjs7NM2QlkLaYt7LbWC8tM5f9seljhI9xGhmd//PLliDMsHRbsWmYAwV9jwAPbVwiX4aID1IXLj7VkuWPmmLnuWpzBANnRr30PqV7z7Llnbs4cFI32FCf0lVVaDJJYc7wLVThPqbLtLwkaksSNOrMsODXe2q3sH0+tp5RpiQjv32ML6pNCOGvUmeQK3ecZvCop9a4xsvNmjC3CVpxSUWe7V67kex7Ax2W7c2xJDd00BvaLeAgpiNNjTZnNqtwYx2H/7XnUgg/N2RWC91v2Od2gOtRU/4jFwXR6v0FWGrS5ZPG88nU3eMI4WCV1B75M+i38eXd5GjZqGfxll+7dJtYNbWGCjlLjkO9K2DPlGQDVfboDq8vlc6d8biR5kXHn2sGVv9m90I0W11ZACn84S71uAfcrfQvLgz5IBExgptggdU8zvVew7OJf3U= ansadm@systools01"
+
+    - name: Ensure correct ownership of .ssh and authorized_keys
+      file:
+        path: /home/ansadm/.ssh/authorized_keys
+        owner: ansadm
+        group: ansadm
+        mode: '0600'
